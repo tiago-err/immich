@@ -3,7 +3,6 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/modules/login/models/authentication_state.model.dart';
 import 'package:immich_mobile/modules/login/providers/authentication.provider.dart';
 
 import 'package:immich_mobile/routing/router.dart';
@@ -13,11 +12,9 @@ import 'package:immich_mobile/shared/providers/backup.provider.dart';
 class ImmichSliverAppBar extends ConsumerWidget {
   const ImmichSliverAppBar({
     Key? key,
-    required this.imageGridGroup,
     this.onPopBack,
   }) : super(key: key);
 
-  final List<Widget> imageGridGroup;
   final Function? onPopBack;
 
   @override

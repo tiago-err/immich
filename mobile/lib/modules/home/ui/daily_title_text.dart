@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/modules/home/providers/home_page_state.provider.dart';
-import 'package:immich_mobile/shared/models/backup_asset.model.dart';
+import 'package:immich_mobile/shared/models/immich_asset.model.dart';
 import 'package:intl/intl.dart';
 
 class DailyTitleText extends ConsumerWidget {
@@ -12,7 +12,7 @@ class DailyTitleText extends ConsumerWidget {
   }) : super(key: key);
 
   final String isoDate;
-  final List<BackupAsset> assetGroup;
+  final List<ImmichAsset> assetGroup;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,28 +25,28 @@ class DailyTitleText extends ConsumerWidget {
     var selectedItems = ref.watch(homePageStateProvider).selectedItems;
 
     void _handleTitleIconClick() {
-      if (isMultiSelectEnable &&
-          selectedDateGroup.contains(dateText) &&
-          selectedDateGroup.length == 1 &&
-          selectedItems.length <= assetGroup.length) {
-        // Multi select is active - click again on the icon while it is the only active group -> disable multi select
-        ref.watch(homePageStateProvider.notifier).disableMultiSelect();
-      } else if (isMultiSelectEnable &&
-          selectedDateGroup.contains(dateText) &&
-          selectedItems.length != assetGroup.length) {
-        // Multi select is active - click again on the icon while it is not the only active group -> remove that group from selected group/items
-        ref.watch(homePageStateProvider.notifier).removeSelectedDateGroup(dateText);
-        ref.watch(homePageStateProvider.notifier).removeMultipleSelectedItem(assetGroup);
-      } else if (isMultiSelectEnable && selectedDateGroup.contains(dateText) && selectedDateGroup.length > 1) {
-        ref.watch(homePageStateProvider.notifier).removeSelectedDateGroup(dateText);
-        ref.watch(homePageStateProvider.notifier).removeMultipleSelectedItem(assetGroup);
-      } else if (isMultiSelectEnable && !selectedDateGroup.contains(dateText)) {
-        ref.watch(homePageStateProvider.notifier).addSelectedDateGroup(dateText);
-        ref.watch(homePageStateProvider.notifier).addMultipleSelectedItems(assetGroup);
-      } else {
-        ref.watch(homePageStateProvider.notifier).enableMultiSelect(assetGroup.toSet());
-        ref.watch(homePageStateProvider.notifier).addSelectedDateGroup(dateText);
-      }
+      // if (isMultiSelectEnable &&
+      //     selectedDateGroup.contains(dateText) &&
+      //     selectedDateGroup.length == 1 &&
+      //     selectedItems.length <= assetGroup.length) {
+      //   // Multi select is active - click again on the icon while it is the only active group -> disable multi select
+      //   ref.watch(homePageStateProvider.notifier).disableMultiSelect();
+      // } else if (isMultiSelectEnable &&
+      //     selectedDateGroup.contains(dateText) &&
+      //     selectedItems.length != assetGroup.length) {
+      //   // Multi select is active - click again on the icon while it is not the only active group -> remove that group from selected group/items
+      //   ref.watch(homePageStateProvider.notifier).removeSelectedDateGroup(dateText);
+      //   ref.watch(homePageStateProvider.notifier).removeMultipleSelectedItem(assetGroup);
+      // } else if (isMultiSelectEnable && selectedDateGroup.contains(dateText) && selectedDateGroup.length > 1) {
+      //   ref.watch(homePageStateProvider.notifier).removeSelectedDateGroup(dateText);
+      //   ref.watch(homePageStateProvider.notifier).removeMultipleSelectedItem(assetGroup);
+      // } else if (isMultiSelectEnable && !selectedDateGroup.contains(dateText)) {
+      //   ref.watch(homePageStateProvider.notifier).addSelectedDateGroup(dateText);
+      //   ref.watch(homePageStateProvider.notifier).addMultipleSelectedItems(assetGroup);
+      // } else {
+      //   ref.watch(homePageStateProvider.notifier).enableMultiSelect(assetGroup.toSet());
+      //   ref.watch(homePageStateProvider.notifier).addSelectedDateGroup(dateText);
+      // }
     }
 
     return SliverToBoxAdapter(

@@ -1,90 +1,67 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:immich_mobile/modules/home/models/get_all_asset_respose.model.dart';
 import 'package:immich_mobile/modules/home/services/asset.service.dart';
 import 'package:immich_mobile/shared/models/backup_asset.model.dart';
-import 'package:intl/intl.dart';
+import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/services/device_info.service.dart';
 import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
+import 'package:photo_manager/photo_manager.dart';
 
-class AssetNotifier extends StateNotifier<List<ImmichAssetGroupByDate>> {
+class AssetNotifier extends StateNotifier<List<ImmichAsset>> {
   final AssetService _assetService = AssetService();
+  final DeviceInfoService _deviceInfoService = DeviceInfoService();
+  bool isFetching = false;
 
   AssetNotifier() : super([]);
 
-  late String? nextPageKey = "";
-  bool isFetching = false;
+  getAllAsset() async {
+    List<ImmichAsset> allAssets = [];
 
-  // Get All assets
-  getAllAssets() async {
-    GetAllAssetResponse? res = await _assetService.getAllAsset();
-    nextPageKey = res?.nextPageKey;
+    var deviceInfo = await _deviceInfoService.getDeviceInfo();
+    var deviceId = deviceInfo["deviceId"];
 
-    if (res != null) {
-      for (var assets in res.data) {
-        state = [...state, assets];
+    List<AssetEntity>? localAssets = await _assetService.getLocalAsset();
+
+    if (localAssets != null) {
+      for (var asset in localAssets) {
+        allAssets.add(
+          ImmichAsset(
+              assetId: asset.id,
+              deviceId: deviceId,
+              mediaType: asset.type,
+              createdDate: asset.createDateTime,
+              type: "local",
+              localAsset: asset,
+              backupAsset: null),
+        );
       }
     }
-  }
 
-  // Get Asset From The Past
-  getOlderAsset() async {
-    if (nextPageKey != null && !isFetching) {
-      isFetching = true;
-      GetAllAssetResponse? res = await _assetService.getOlderAsset(nextPageKey);
+    List<BackupAsset>? backupAsset = await _assetService.getBackupAsset();
 
-      if (res != null) {
-        nextPageKey = res.nextPageKey;
-
-        List<ImmichAssetGroupByDate> previousState = state;
-        List<ImmichAssetGroupByDate> currentState = [];
-
-        for (var assets in res.data) {
-          currentState = [...currentState, assets];
-        }
-
-        if (previousState.last.date == currentState.first.date) {
-          previousState.last.assets = [...previousState.last.assets, ...currentState.first.assets];
-          state = [...previousState, ...currentState.sublist(1)];
-        } else {
-          state = [...previousState, ...currentState];
-        }
+    if (backupAsset != null) {
+      for (var asset in backupAsset) {
+        allAssets.add(
+          ImmichAsset(
+            assetId: asset.deviceAssetId,
+            deviceId: asset.deviceId,
+            mediaType: asset.type == "IMAGE" ? AssetType.image : AssetType.video,
+            type: "backup",
+            createdDate: DateTime.parse(asset.createdAt),
+            localAsset: null,
+            backupAsset: asset,
+          ),
+        );
       }
-
-      isFetching = false;
     }
-  }
 
-  // Get newer asset from the current time
-  getNewAsset() async {
-    if (state.isNotEmpty) {
-      var latestGroup = state.first;
+    List<ImmichAsset> distinctAsset = allAssets.toSet().toList();
 
-      // Sort the last asset group and put the lastest asset in front.
-      latestGroup.assets.sortByCompare<DateTime>((e) => DateTime.parse(e.createdAt), (a, b) => b.compareTo(a));
-      var latestAsset = latestGroup.assets.first;
-      var formatDateTemplate = 'y-MM-dd';
-      var latestAssetDateText = DateFormat(formatDateTemplate).format(DateTime.parse(latestAsset.createdAt));
+    distinctAsset.sortByCompare<DateTime>((element) => element.createdDate, (a, b) => b.compareTo(a));
 
-      List<BackupAsset> newAssets = await _assetService.getNewAsset(latestAsset.createdAt);
+    // var groupList = distinctAsset.groupListsBy((element) => DateFormat('yMd').format(element.createdDate));
 
-      if (newAssets.isEmpty) {
-        return;
-      }
-
-      // Grouping by data
-      var groupByDateList = groupBy<BackupAsset, String>(
-          newAssets, (asset) => DateFormat(formatDateTemplate).format(DateTime.parse(asset.createdAt)));
-
-      groupByDateList.forEach((groupDateInFormattedText, assets) {
-        if (groupDateInFormattedText != latestAssetDateText) {
-          ImmichAssetGroupByDate newGroup = ImmichAssetGroupByDate(assets: assets, date: groupDateInFormattedText);
-          state = [newGroup, ...state];
-        } else {
-          latestGroup.assets.insertAll(0, assets);
-
-          state = [latestGroup, ...state.sublist(1)];
-        }
-      });
-    }
+    state = distinctAsset;
   }
 
   clearAllAsset() {
@@ -92,8 +69,12 @@ class AssetNotifier extends StateNotifier<List<ImmichAssetGroupByDate>> {
   }
 }
 
-final currentLocalPageProvider = StateProvider<int>((ref) => 0);
-
-final assetProvider = StateNotifierProvider<AssetNotifier, List<ImmichAssetGroupByDate>>((ref) {
+final assetProvider = StateNotifierProvider<AssetNotifier, List<ImmichAsset>>((ref) {
   return AssetNotifier();
+});
+
+final assetGroupByDateTimeProvider = StateProvider((ref) {
+  var assetGroup = ref.watch(assetProvider);
+
+  return assetGroup.groupListsBy((element) => DateFormat('y-MM-dd').format(element.createdDate));
 });

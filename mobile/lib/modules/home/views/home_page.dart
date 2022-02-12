@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/modules/home/providers/home_page_state.provider.dart';
-import 'package:immich_mobile/modules/home/providers/local_asset.provider.dart';
 import 'package:immich_mobile/modules/home/ui/control_bottom_app_bar.dart';
-import 'package:immich_mobile/modules/home/ui/daily_title_text.dart';
 import 'package:immich_mobile/modules/home/ui/disable_multi_select_button.dart';
 import 'package:immich_mobile/modules/home/ui/draggable_scrollbar.dart';
-import 'package:immich_mobile/modules/home/ui/image_grid.dart';
 import 'package:immich_mobile/modules/home/ui/immich_sliver_appbar.dart';
 import 'package:immich_mobile/modules/home/ui/local_image_grid.dart';
 import 'package:immich_mobile/modules/home/ui/monthly_title_text.dart';
 import 'package:immich_mobile/modules/home/ui/profile_drawer.dart';
-import 'package:immich_mobile/modules/home/models/get_all_asset_respose.model.dart';
 import 'package:immich_mobile/modules/home/providers/asset.provider.dart';
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+
+import '../ui/daily_title_text.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,24 +20,21 @@ class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ScrollController _scrollController = useScrollController();
-    List<ImmichAssetGroupByDate> _assetGroup = ref.watch(assetProvider);
-    List<ImmichAsset> _localAssetEntityList = ref.watch(localAssetProvider);
-    List<Widget> _imageGridGroup = [];
-    List<Widget> _localImages = [];
     var isMultiSelectEnable = ref.watch(homePageStateProvider).isMultiSelectEnable;
     var homePageState = ref.watch(homePageStateProvider);
+    var assetGroupByDateTime = ref.watch(assetGroupByDateTimeProvider);
+    List<Widget> renderGroup = [];
 
     _scrollControllerCallback() {
       var endOfPage = _scrollController.position.maxScrollExtent;
 
       if (_scrollController.offset >= endOfPage - (endOfPage * 0.1) && !_scrollController.position.outOfRange) {
-        ref.read(assetProvider.notifier).getOlderAsset();
+        // ref.read(assetProvider.notifier).getAllAsset();
       }
     }
 
     useEffect(() {
-      // ref.read(assetProvider.notifier).getAllAssets();
-      ref.watch(localAssetProvider.notifier).getLocalAsset();
+      ref.read(assetProvider.notifier).getAllAsset();
 
       _scrollController.addListener(_scrollControllerCallback);
       return () {
@@ -48,60 +42,39 @@ class HomePage extends HookConsumerWidget {
       };
     }, []);
 
-    onPopBackFromBackupPage() {
-      ref.read(assetProvider.notifier).getNewAsset();
-      // Remove and force getting new widget again if there is not many widget on screen.
-      // Otherwise do nothing.
-
-      if (_imageGridGroup.isNotEmpty && _imageGridGroup.length < 20) {
-        ref.read(assetProvider.notifier).getOlderAsset();
-      } else if (_imageGridGroup.isEmpty) {
-        ref.read(assetProvider.notifier).getAllAssets();
-      }
-    }
+    onPopBackFromBackupPage() {}
 
     Widget _buildBody() {
-      if (_assetGroup.isNotEmpty) {
-        String lastGroupDate = _assetGroup[0].date;
+      if (assetGroupByDateTime.isNotEmpty) {
+        int? lastMonth;
 
-        for (var group in _assetGroup) {
-          var dateTitle = group.date;
-          var assetGroup = group.assets;
+        assetGroupByDateTime.forEach((dateGroup, value) {
+          DateTime parseDateGroup = DateTime.parse(dateGroup);
+          int currentMonth = parseDateGroup.month;
 
-          int? currentMonth = DateTime.tryParse(dateTitle)?.month;
-          int? previousMonth = DateTime.tryParse(lastGroupDate)?.month;
-
-          // Add Monthly Title Group if started at the beginning of the month
-
-          if (currentMonth != null && previousMonth != null) {
-            if ((currentMonth - previousMonth) != 0) {
-              _imageGridGroup.add(
-                MonthlyTitleText(isoDate: dateTitle),
+          if (lastMonth != null) {
+            if (currentMonth - lastMonth! != 0) {
+              renderGroup.add(
+                MonthlyTitleText(
+                  isoDate: dateGroup,
+                ),
               );
             }
           }
 
-          // Add Daily Title Group
-          _imageGridGroup.add(
+          renderGroup.add(
             DailyTitleText(
-              isoDate: dateTitle,
-              assetGroup: assetGroup,
+              isoDate: dateGroup,
+              assetGroup: value,
             ),
           );
 
-          // Add Image Group
-          _imageGridGroup.add(
-            ImageGrid(assetGroup: assetGroup),
+          renderGroup.add(
+            LocalImageGrid(assetGroup: value),
           );
-          //
-          lastGroupDate = dateTitle;
-        }
-      }
 
-      if (_localAssetEntityList.isNotEmpty) {
-        print("build local thunmb");
-
-        _localImages.add(LocalImageGrid(assetGroup: ref.watch(localAssetProvider)));
+          lastMonth = currentMonth;
+        });
       }
 
       return SafeArea(
@@ -125,13 +98,11 @@ class HomePage extends HookConsumerWidget {
                             ),
                           )
                         : ImmichSliverAppBar(
-                            imageGridGroup: _imageGridGroup,
                             onPopBack: onPopBackFromBackupPage,
                           ),
                     duration: const Duration(milliseconds: 350),
                   ),
-                  ..._imageGridGroup,
-                  ..._localImages
+                  ...renderGroup
                 ],
               ),
             ),
