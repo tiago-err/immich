@@ -1,7 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/modules/home/models/get_all_asset_respose.model.dart';
 import 'package:immich_mobile/modules/home/services/asset.service.dart';
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 import 'package:intl/intl.dart';
 import 'package:collection/collection.dart';
 
@@ -64,14 +64,14 @@ class AssetNotifier extends StateNotifier<List<ImmichAssetGroupByDate>> {
       var formatDateTemplate = 'y-MM-dd';
       var latestAssetDateText = DateFormat(formatDateTemplate).format(DateTime.parse(latestAsset.createdAt));
 
-      List<ImmichAsset> newAssets = await _assetService.getNewAsset(latestAsset.createdAt);
+      List<BackupAsset> newAssets = await _assetService.getNewAsset(latestAsset.createdAt);
 
       if (newAssets.isEmpty) {
         return;
       }
 
       // Grouping by data
-      var groupByDateList = groupBy<ImmichAsset, String>(
+      var groupByDateList = groupBy<BackupAsset, String>(
           newAssets, (asset) => DateFormat(formatDateTemplate).format(DateTime.parse(asset.createdAt)));
 
       groupByDateList.forEach((groupDateInFormattedText, assets) {

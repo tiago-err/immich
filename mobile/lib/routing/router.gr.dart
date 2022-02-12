@@ -13,25 +13,20 @@
 part of 'router.dart';
 
 class _$AppRouter extends RootStackRouter {
-  _$AppRouter(
-      {GlobalKey<NavigatorState>? navigatorKey, required this.authGuard})
-      : super(navigatorKey);
+  _$AppRouter({GlobalKey<NavigatorState>? navigatorKey, required this.authGuard}) : super(navigatorKey);
 
   final AuthGuard authGuard;
 
   @override
   final Map<String, PageFactory> pagesMap = {
     LoginRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-          routeData: routeData, child: const LoginPage());
+      return MaterialPageX<dynamic>(routeData: routeData, child: const LoginPage());
     },
     HomeRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-          routeData: routeData, child: const HomePage());
+      return MaterialPageX<dynamic>(routeData: routeData, child: const HomePage());
     },
     BackupControllerRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-          routeData: routeData, child: const BackupControllerPage());
+      return MaterialPageX<dynamic>(routeData: routeData, child: const BackupControllerPage());
     },
     ImageViewerRoute.name: (routeData) {
       final args = routeData.argsAs<ImageViewerRouteArgs>();
@@ -47,8 +42,7 @@ class _$AppRouter extends RootStackRouter {
     VideoViewerRoute.name: (routeData) {
       final args = routeData.argsAs<VideoViewerRouteArgs>();
       return MaterialPageX<dynamic>(
-          routeData: routeData,
-          child: VideoViewerPage(key: args.key, videoUrl: args.videoUrl));
+          routeData: routeData, child: VideoViewerPage(key: args.key, videoUrl: args.videoUrl));
     }
   };
 
@@ -56,12 +50,9 @@ class _$AppRouter extends RootStackRouter {
   List<RouteConfig> get routes => [
         RouteConfig(LoginRoute.name, path: '/'),
         RouteConfig(HomeRoute.name, path: '/home-page', guards: [authGuard]),
-        RouteConfig(BackupControllerRoute.name,
-            path: '/backup-controller-page', guards: [authGuard]),
-        RouteConfig(ImageViewerRoute.name,
-            path: '/image-viewer-page', guards: [authGuard]),
-        RouteConfig(VideoViewerRoute.name,
-            path: '/video-viewer-page', guards: [authGuard])
+        RouteConfig(BackupControllerRoute.name, path: '/backup-controller-page', guards: [authGuard]),
+        RouteConfig(ImageViewerRoute.name, path: '/image-viewer-page', guards: [authGuard]),
+        RouteConfig(VideoViewerRoute.name, path: '/video-viewer-page', guards: [authGuard])
       ];
 }
 
@@ -84,8 +75,7 @@ class HomeRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [BackupControllerPage]
 class BackupControllerRoute extends PageRouteInfo<void> {
-  const BackupControllerRoute()
-      : super(BackupControllerRoute.name, path: '/backup-controller-page');
+  const BackupControllerRoute() : super(BackupControllerRoute.name, path: '/backup-controller-page');
 
   static const String name = 'BackupControllerRoute';
 }
@@ -98,26 +88,18 @@ class ImageViewerRoute extends PageRouteInfo<ImageViewerRouteArgs> {
       required String imageUrl,
       required String heroTag,
       required String thumbnailUrl,
-      required ImmichAsset asset})
+      required BackupAsset asset})
       : super(ImageViewerRoute.name,
             path: '/image-viewer-page',
             args: ImageViewerRouteArgs(
-                key: key,
-                imageUrl: imageUrl,
-                heroTag: heroTag,
-                thumbnailUrl: thumbnailUrl,
-                asset: asset));
+                key: key, imageUrl: imageUrl, heroTag: heroTag, thumbnailUrl: thumbnailUrl, asset: asset));
 
   static const String name = 'ImageViewerRoute';
 }
 
 class ImageViewerRouteArgs {
   const ImageViewerRouteArgs(
-      {this.key,
-      required this.imageUrl,
-      required this.heroTag,
-      required this.thumbnailUrl,
-      required this.asset});
+      {this.key, required this.imageUrl, required this.heroTag, required this.thumbnailUrl, required this.asset});
 
   final Key? key;
 
@@ -127,7 +109,7 @@ class ImageViewerRouteArgs {
 
   final String thumbnailUrl;
 
-  final ImmichAsset asset;
+  final BackupAsset asset;
 
   @override
   String toString() {
@@ -140,8 +122,7 @@ class ImageViewerRouteArgs {
 class VideoViewerRoute extends PageRouteInfo<VideoViewerRouteArgs> {
   VideoViewerRoute({Key? key, required String videoUrl})
       : super(VideoViewerRoute.name,
-            path: '/video-viewer-page',
-            args: VideoViewerRouteArgs(key: key, videoUrl: videoUrl));
+            path: '/video-viewer-page', args: VideoViewerRouteArgs(key: key, videoUrl: videoUrl));
 
   static const String name = 'VideoViewerRoute';
 }

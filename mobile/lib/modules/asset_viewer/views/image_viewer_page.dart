@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -8,7 +7,7 @@ import 'package:immich_mobile/constants/hive_box.dart';
 import 'package:immich_mobile/modules/asset_viewer/ui/exif_bottom_sheet.dart';
 import 'package:immich_mobile/modules/asset_viewer/ui/top_control_app_bar.dart';
 import 'package:immich_mobile/modules/home/services/asset.service.dart';
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 import 'package:immich_mobile/shared/models/immich_asset_with_exif.model.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -17,7 +16,7 @@ class ImageViewerPage extends HookConsumerWidget {
   final String imageUrl;
   final String heroTag;
   final String thumbnailUrl;
-  final ImmichAsset asset;
+  final BackupAsset asset;
   final AssetService _assetService = AssetService();
   ImmichAssetWithExif? assetDetail;
 
@@ -35,6 +34,7 @@ class ImageViewerPage extends HookConsumerWidget {
 
     useEffect(() {
       getAssetExif();
+      return null;
     }, []);
 
     return Scaffold(

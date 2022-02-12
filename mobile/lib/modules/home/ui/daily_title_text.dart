@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/modules/home/providers/home_page_state.provider.dart';
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 import 'package:intl/intl.dart';
 
 class DailyTitleText extends ConsumerWidget {
@@ -12,7 +12,7 @@ class DailyTitleText extends ConsumerWidget {
   }) : super(key: key);
 
   final String isoDate;
-  final List<ImmichAsset> assetGroup;
+  final List<BackupAsset> assetGroup;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

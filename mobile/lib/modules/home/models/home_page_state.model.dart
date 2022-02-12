@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 
 class HomePageState {
   final bool isMultiSelectEnable;
-  final Set<ImmichAsset> selectedItems;
+  final Set<BackupAsset> selectedItems;
   final Set<String> selectedDateGroup;
   HomePageState({
     required this.isMultiSelectEnable,
@@ -16,7 +16,7 @@ class HomePageState {
 
   HomePageState copyWith({
     bool? isMultiSelectEnable,
-    Set<ImmichAsset>? selectedItems,
+    Set<BackupAsset>? selectedItems,
     Set<String>? selectedDateGroup,
   }) {
     return HomePageState(
@@ -37,7 +37,7 @@ class HomePageState {
   factory HomePageState.fromMap(Map<String, dynamic> map) {
     return HomePageState(
       isMultiSelectEnable: map['isMultiSelectEnable'] ?? false,
-      selectedItems: Set<ImmichAsset>.from(map['selectedItems']?.map((x) => ImmichAsset.fromMap(x))),
+      selectedItems: Set<BackupAsset>.from(map['selectedItems']?.map((x) => BackupAsset.fromMap(x))),
       selectedDateGroup: Set<String>.from(map['selectedDateGroup']),
     );
   }

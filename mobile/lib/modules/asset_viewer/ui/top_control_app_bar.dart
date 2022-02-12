@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 
 class TopControlAppBar extends StatelessWidget with PreferredSizeWidget {
   const TopControlAppBar({Key? key, required this.asset, required this.onMoreInfoPressed}) : super(key: key);
 
-  final ImmichAsset asset;
+  final BackupAsset asset;
   final Function onMoreInfoPressed;
   @override
   Widget build(BuildContext context) {

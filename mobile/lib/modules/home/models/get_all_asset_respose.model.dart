@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 
 class ImmichAssetGroupByDate {
   final String date;
-  List<ImmichAsset> assets;
+  List<BackupAsset> assets;
   ImmichAssetGroupByDate({
     required this.date,
     required this.assets,
@@ -13,7 +13,7 @@ class ImmichAssetGroupByDate {
 
   ImmichAssetGroupByDate copyWith({
     String? date,
-    List<ImmichAsset>? assets,
+    List<BackupAsset>? assets,
   }) {
     return ImmichAssetGroupByDate(
       date: date ?? this.date,
@@ -31,7 +31,7 @@ class ImmichAssetGroupByDate {
   factory ImmichAssetGroupByDate.fromMap(Map<String, dynamic> map) {
     return ImmichAssetGroupByDate(
       date: map['date'] ?? '',
-      assets: List<ImmichAsset>.from(map['assets']?.map((x) => ImmichAsset.fromMap(x))),
+      assets: List<BackupAsset>.from(map['assets']?.map((x) => BackupAsset.fromMap(x))),
     );
   }
 

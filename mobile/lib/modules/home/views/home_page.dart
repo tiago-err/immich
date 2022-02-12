@@ -14,7 +14,7 @@ import 'package:immich_mobile/modules/home/ui/monthly_title_text.dart';
 import 'package:immich_mobile/modules/home/ui/profile_drawer.dart';
 import 'package:immich_mobile/modules/home/models/get_all_asset_respose.model.dart';
 import 'package:immich_mobile/modules/home/providers/asset.provider.dart';
-import 'package:photo_manager/photo_manager.dart';
+import 'package:immich_mobile/shared/models/immich_asset.model.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class HomePage extends HookConsumerWidget {
@@ -24,7 +24,7 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ScrollController _scrollController = useScrollController();
     List<ImmichAssetGroupByDate> _assetGroup = ref.watch(assetProvider);
-    List<AssetEntity> _localAssetEntityList = ref.watch(localAssetProvider);
+    List<ImmichAsset> _localAssetEntityList = ref.watch(localAssetProvider);
     List<Widget> _imageGridGroup = [];
     List<Widget> _localImages = [];
     var isMultiSelectEnable = ref.watch(homePageStateProvider).isMultiSelectEnable;

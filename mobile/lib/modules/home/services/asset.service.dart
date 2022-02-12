@@ -2,19 +2,38 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:immich_mobile/modules/home/models/get_all_asset_respose.model.dart';
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 import 'package:immich_mobile/shared/models/immich_asset_with_exif.model.dart';
 import 'package:immich_mobile/shared/services/network.service.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class AssetService {
   final NetworkService _networkService = NetworkService();
+  Future<List<AssetEntity>?> getLocalAsset() async {
+    var getPhotoAccessResult = await PhotoManager.requestPermissionExtend();
 
-  Future<List<ImmichAsset>?> getAllRawAsset() async {
+    if (getPhotoAccessResult.isAuth) {
+      await PhotoManager.clearFileCache();
+      // Gather assets info
+      List<AssetPathEntity> list =
+          await PhotoManager.getAssetPathList(hasAll: true, onlyAll: true, type: RequestType.common);
+
+      int totalAsset = list[0].assetCount;
+      List<AssetEntity> localAssets = await list[0].getAssetListRange(start: 0, end: totalAsset);
+
+      return localAssets;
+    } else {
+      PhotoManager.openSetting();
+      return null;
+    }
+  }
+
+  Future<List<BackupAsset>?> getBackupAsset() async {
     var res = await _networkService.getRequest(url: "asset/allRaw");
     try {
       List<dynamic> decodedData = jsonDecode(res.toString());
 
-      List<ImmichAsset> result = List.from(decodedData.map((a) => ImmichAsset.fromMap(a)));
+      List<BackupAsset> result = List.from(decodedData.map((a) => BackupAsset.fromMap(a)));
       return result;
     } catch (e) {
       debugPrint("Error getAllAsset  ${e.toString()}");
@@ -53,7 +72,7 @@ class AssetService {
     return null;
   }
 
-  Future<List<ImmichAsset>> getNewAsset(String latestDate) async {
+  Future<List<BackupAsset>> getNewAsset(String latestDate) async {
     try {
       var res = await _networkService.getRequest(
         url: "asset/new?latestDate=$latestDate",
@@ -61,7 +80,7 @@ class AssetService {
 
       List<dynamic> decodedData = jsonDecode(res.toString());
 
-      List<ImmichAsset> result = List.from(decodedData.map((a) => ImmichAsset.fromMap(a)));
+      List<BackupAsset> result = List.from(decodedData.map((a) => BackupAsset.fromMap(a)));
       if (result.isNotEmpty) {
         return result;
       }

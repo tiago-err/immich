@@ -7,11 +7,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/hive_box.dart';
 import 'package:immich_mobile/modules/home/providers/home_page_state.provider.dart';
-import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 import 'package:immich_mobile/routing/router.dart';
 
 class ThumbnailImage extends HookConsumerWidget {
-  final ImmichAsset asset;
+  final BackupAsset asset;
 
   const ThumbnailImage({Key? key, required this.asset}) : super(key: key);
 
@@ -26,7 +26,7 @@ class ThumbnailImage extends HookConsumerWidget {
     var selectedAsset = ref.watch(homePageStateProvider).selectedItems;
     var isMultiSelectEnable = ref.watch(homePageStateProvider).isMultiSelectEnable;
 
-    Widget _buildSelectionIcon(ImmichAsset asset) {
+    Widget _buildSelectionIcon(BackupAsset asset) {
       if (selectedAsset.contains(asset)) {
         return Icon(
           Icons.check_circle,
