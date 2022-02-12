@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/modules/home/providers/home_page_state.provider.dart';
+import 'package:immich_mobile/modules/home/providers/local_asset.provider.dart';
 import 'package:immich_mobile/modules/home/ui/control_bottom_app_bar.dart';
 import 'package:immich_mobile/modules/home/ui/daily_title_text.dart';
 import 'package:immich_mobile/modules/home/ui/disable_multi_select_button.dart';
 import 'package:immich_mobile/modules/home/ui/draggable_scrollbar.dart';
 import 'package:immich_mobile/modules/home/ui/image_grid.dart';
 import 'package:immich_mobile/modules/home/ui/immich_sliver_appbar.dart';
+import 'package:immich_mobile/modules/home/ui/local_image_grid.dart';
 import 'package:immich_mobile/modules/home/ui/monthly_title_text.dart';
 import 'package:immich_mobile/modules/home/ui/profile_drawer.dart';
 import 'package:immich_mobile/modules/home/models/get_all_asset_respose.model.dart';
 import 'package:immich_mobile/modules/home/providers/asset.provider.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class HomePage extends HookConsumerWidget {
@@ -21,7 +24,9 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ScrollController _scrollController = useScrollController();
     List<ImmichAssetGroupByDate> _assetGroup = ref.watch(assetProvider);
+    List<AssetEntity> _localAssetEntityList = ref.watch(localAssetProvider);
     List<Widget> _imageGridGroup = [];
+    List<Widget> _localImages = [];
     var isMultiSelectEnable = ref.watch(homePageStateProvider).isMultiSelectEnable;
     var homePageState = ref.watch(homePageStateProvider);
 
@@ -34,7 +39,8 @@ class HomePage extends HookConsumerWidget {
     }
 
     useEffect(() {
-      ref.read(assetProvider.notifier).getAllAssets();
+      // ref.read(assetProvider.notifier).getAllAssets();
+      ref.watch(localAssetProvider.notifier).getLocalAsset();
 
       _scrollController.addListener(_scrollControllerCallback);
       return () {
@@ -92,6 +98,12 @@ class HomePage extends HookConsumerWidget {
         }
       }
 
+      if (_localAssetEntityList.isNotEmpty) {
+        print("build local thunmb");
+
+        _localImages.add(LocalImageGrid(assetGroup: ref.watch(localAssetProvider)));
+      }
+
       return SafeArea(
         bottom: !isMultiSelectEnable,
         top: !isMultiSelectEnable,
@@ -118,7 +130,8 @@ class HomePage extends HookConsumerWidget {
                           ),
                     duration: const Duration(milliseconds: 350),
                   ),
-                  ..._imageGridGroup
+                  ..._imageGridGroup,
+                  ..._localImages
                 ],
               ),
             ),

@@ -154,6 +154,11 @@ export class AssetController {
     return await this.assetService.getAllAssets(authUser, query);
   }
 
+  @Get('/allRaw')
+  async getAllRawAssets(@GetAuthUser() authUser: AuthUserDto, @Query(ValidationPipe) query: GetAllAssetQueryDto) {
+    return await this.assetService.getAllRawAssets(authUser, query);
+  }
+
   @Get('/:deviceId')
   async getUserAssetsByDeviceId(@GetAuthUser() authUser: AuthUserDto, @Param('deviceId') deviceId: string) {
     return await this.assetService.getUserAssetsByDeviceId(authUser, deviceId);

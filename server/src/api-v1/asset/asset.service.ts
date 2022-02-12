@@ -88,6 +88,20 @@ export class AssetService {
     }
   }
 
+  public async getAllRawAssets(authUser: AuthUserDto, query: GetAllAssetQueryDto) {
+    try {
+      const assets = await this.assetRepository
+        .createQueryBuilder('a')
+        .where('a."userId" = :userId', { userId: authUser.id })
+        .orderBy('a."createdAt"::date', 'DESC')
+        .getMany();
+
+      return assets;
+    } catch (e) {
+      Logger.error(e, 'getAllAssets');
+    }
+  }
+
   public async findOne(authUser: AuthUserDto, deviceId: string, assetId: string): Promise<AssetEntity> {
     const rows = await this.assetRepository.query(
       'SELECT * FROM assets a WHERE a."deviceAssetId" = $1 AND a."userId" = $2 AND a."deviceId" = $3',

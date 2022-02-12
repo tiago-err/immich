@@ -9,6 +9,19 @@ import 'package:immich_mobile/shared/services/network.service.dart';
 class AssetService {
   final NetworkService _networkService = NetworkService();
 
+  Future<List<ImmichAsset>?> getAllRawAsset() async {
+    var res = await _networkService.getRequest(url: "asset/allRaw");
+    try {
+      List<dynamic> decodedData = jsonDecode(res.toString());
+
+      List<ImmichAsset> result = List.from(decodedData.map((a) => ImmichAsset.fromMap(a)));
+      return result;
+    } catch (e) {
+      debugPrint("Error getAllAsset  ${e.toString()}");
+    }
+    return null;
+  }
+
   Future<GetAllAssetResponse?> getAllAsset() async {
     var res = await _networkService.getRequest(url: "asset/all");
     try {
