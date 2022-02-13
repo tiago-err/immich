@@ -6,7 +6,7 @@ import 'package:immich_mobile/modules/home/ui/control_bottom_app_bar.dart';
 import 'package:immich_mobile/modules/home/ui/disable_multi_select_button.dart';
 import 'package:immich_mobile/modules/home/ui/draggable_scrollbar.dart';
 import 'package:immich_mobile/modules/home/ui/immich_sliver_appbar.dart';
-import 'package:immich_mobile/modules/home/ui/local_image_grid.dart';
+import 'package:immich_mobile/modules/home/ui/image_grid.dart';
 import 'package:immich_mobile/modules/home/ui/monthly_title_text.dart';
 import 'package:immich_mobile/modules/home/ui/profile_drawer.dart';
 import 'package:immich_mobile/modules/home/providers/asset.provider.dart';
@@ -48,7 +48,7 @@ class HomePage extends HookConsumerWidget {
       if (assetGroupByDateTime.isNotEmpty) {
         int? lastMonth;
 
-        assetGroupByDateTime.forEach((dateGroup, value) {
+        assetGroupByDateTime.forEach((dateGroup, immichAssetList) {
           DateTime parseDateGroup = DateTime.parse(dateGroup);
           int currentMonth = parseDateGroup.month;
 
@@ -65,12 +65,12 @@ class HomePage extends HookConsumerWidget {
           renderGroup.add(
             DailyTitleText(
               isoDate: dateGroup,
-              assetGroup: value,
+              assetGroup: immichAssetList,
             ),
           );
 
           renderGroup.add(
-            LocalImageGrid(assetGroup: value),
+            ImageGrid(assetGroup: immichAssetList),
           );
 
           lastMonth = currentMonth;

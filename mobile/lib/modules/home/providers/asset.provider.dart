@@ -57,6 +57,8 @@ class AssetNotifier extends StateNotifier<List<ImmichAsset>> {
       }
     }
 
+    final asset = await AssetEntity.fromId("C06741CE-8AAA-4C0B-93FA-54DCAFBEE642/L0/001");
+
     List<ImmichAsset> distinctAsset = allAssets.toSet().toList();
     for (var i = 0; i < distinctAsset.length; i++) {
       var asset = backupAsset!

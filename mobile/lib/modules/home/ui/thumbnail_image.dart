@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/constants/hive_box.dart';
@@ -17,8 +16,6 @@ class ThumbnailImage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cacheKey = useState(1);
-
     var box = Hive.box(userInfoBox);
     var thumbnailRequestUrl =
         '${box.get(serverEndpointKey)}/asset/file?aid=${asset.deviceAssetId}&did=${asset.deviceId}&isThumb=true';
@@ -86,7 +83,7 @@ class ThumbnailImage extends HookConsumerWidget {
                     : const Border(),
               ),
               child: CachedNetworkImage(
-                cacheKey: "${asset.id}-${cacheKey.value}",
+                cacheKey: asset.id,
                 width: 300,
                 height: 300,
                 memCacheHeight: asset.type == 'IMAGE' ? 250 : 400,
@@ -99,8 +96,6 @@ class ThumbnailImage extends HookConsumerWidget {
                   child: CircularProgressIndicator(value: downloadProgress.progress),
                 ),
                 errorWidget: (context, url, error) {
-                  debugPrint("Error Loading Thumbnail Widget $error");
-                  cacheKey.value += 1;
                   return const Icon(Icons.error);
                 },
               ),

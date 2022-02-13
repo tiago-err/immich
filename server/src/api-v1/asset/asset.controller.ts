@@ -13,6 +13,7 @@ import {
   Response,
   Headers,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../modules/immich-jwt/guards/jwt-auth.guard';
 import { AssetService } from './asset.service';
@@ -74,6 +75,7 @@ export class AssetController {
     @Query(ValidationPipe) query: ServeFileDto,
   ): Promise<StreamableFile> {
     let file = null;
+
     const asset = await this.assetService.findOne(authUser, query.did, query.aid);
 
     // Handle Sending Images
@@ -87,6 +89,11 @@ export class AssetController {
       } else {
         file = createReadStream(asset.resizePath);
       }
+
+      file.on('error', (e) => {
+        // console.log('error create read stream', e);
+        return new InternalServerErrorException('error reading file - might be live photos');
+      });
 
       return new StreamableFile(file);
     } else if (asset.type == AssetType.VIDEO) {
