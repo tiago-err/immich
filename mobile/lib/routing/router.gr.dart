@@ -42,7 +42,8 @@ class _$AppRouter extends RootStackRouter {
               imageUrl: args.imageUrl,
               heroTag: args.heroTag,
               thumbnailUrl: args.thumbnailUrl,
-              asset: args.asset));
+              asset: args.asset,
+              isBackupAsset: args.isBackupAsset));
     },
     VideoViewerRoute.name: (routeData) {
       final args = routeData.argsAs<VideoViewerRouteArgs>();
@@ -98,7 +99,8 @@ class ImageViewerRoute extends PageRouteInfo<ImageViewerRouteArgs> {
       required String imageUrl,
       required String heroTag,
       required String thumbnailUrl,
-      required BackupAsset asset})
+      required BackupAsset asset,
+      required bool isBackupAsset})
       : super(ImageViewerRoute.name,
             path: '/image-viewer-page',
             args: ImageViewerRouteArgs(
@@ -106,7 +108,8 @@ class ImageViewerRoute extends PageRouteInfo<ImageViewerRouteArgs> {
                 imageUrl: imageUrl,
                 heroTag: heroTag,
                 thumbnailUrl: thumbnailUrl,
-                asset: asset));
+                asset: asset,
+                isBackupAsset: isBackupAsset));
 
   static const String name = 'ImageViewerRoute';
 }
@@ -117,7 +120,8 @@ class ImageViewerRouteArgs {
       required this.imageUrl,
       required this.heroTag,
       required this.thumbnailUrl,
-      required this.asset});
+      required this.asset,
+      required this.isBackupAsset});
 
   final Key? key;
 
@@ -129,9 +133,11 @@ class ImageViewerRouteArgs {
 
   final BackupAsset asset;
 
+  final bool isBackupAsset;
+
   @override
   String toString() {
-    return 'ImageViewerRouteArgs{key: $key, imageUrl: $imageUrl, heroTag: $heroTag, thumbnailUrl: $thumbnailUrl, asset: $asset}';
+    return 'ImageViewerRouteArgs{key: $key, imageUrl: $imageUrl, heroTag: $heroTag, thumbnailUrl: $thumbnailUrl, asset: $asset, isBackupAsset: $isBackupAsset}';
   }
 }
 

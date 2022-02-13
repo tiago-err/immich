@@ -58,20 +58,27 @@ class ThumbnailImage extends HookConsumerWidget {
           ref.watch(homePageStateProvider.notifier).addSingleSelectedItem(asset);
         } else {
           if (asset.mediaType == AssetType.image && asset.type == ImmichAssetType.backup) {
-            if (asset.backupAsset != null) {
-              print(asset.backupAsset);
-              AutoRouter.of(context).push(
-                ImageViewerRoute(
-                  imageUrl:
-                      '$endpoint/asset/file?aid=${asset.backupAsset?.deviceAssetId}&did=${asset.backupAsset?.deviceId}&isThumb=false',
-                  heroTag: asset.assetId,
-                  thumbnailUrl: thumbnailRequestUrl,
-                  asset: asset.backupAsset!,
-                ),
-              );
-            }
+            AutoRouter.of(context).push(
+              ImageViewerRoute(
+                imageUrl:
+                    '$endpoint/asset/file?aid=${asset.backupAsset?.deviceAssetId}&did=${asset.backupAsset?.deviceId}&isThumb=false',
+                heroTag: asset.assetId,
+                thumbnailUrl: thumbnailRequestUrl,
+                asset: asset.backupAsset!,
+                isBackupAsset: true,
+              ),
+            );
           } else if (asset.mediaType == AssetType.image && asset.type == ImmichAssetType.local) {
-            debugPrint("Show image from local");
+            // AutoRouter.of(context).push(
+            //     ImageViewerRoute(
+            //       imageUrl:
+            //           '$endpoint/asset/file?aid=${asset.backupAsset?.deviceAssetId}&did=${asset.backupAsset?.deviceId}&isThumb=false',
+            //       heroTag: asset.assetId,
+            //       thumbnailUrl: thumbnailRequestUrl,
+            //       asset: asset.backupAsset!,
+            //       isBackupAsset: false,
+            //     ),
+            //   );
           } else {
             AutoRouter.of(context).push(
               VideoViewerRoute(

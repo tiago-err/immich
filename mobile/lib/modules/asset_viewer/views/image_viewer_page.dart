@@ -17,11 +17,17 @@ class ImageViewerPage extends HookConsumerWidget {
   final String thumbnailUrl;
   final BackupAsset asset;
   final AssetService _assetService = AssetService();
+  final bool isBackupAsset;
   ImmichAssetWithExif? assetDetail;
 
-  ImageViewerPage(
-      {Key? key, required this.imageUrl, required this.heroTag, required this.thumbnailUrl, required this.asset})
-      : super(key: key);
+  ImageViewerPage({
+    Key? key,
+    required this.imageUrl,
+    required this.heroTag,
+    required this.thumbnailUrl,
+    required this.asset,
+    required this.isBackupAsset,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,9 +88,6 @@ class ImageViewerPage extends HookConsumerWidget {
                 ],
               ),
             ),
-            // imageBuilder: (context, imageProvider) {
-            //   return PhotoView(imageProvider: imageProvider);
-            // },
             placeholder: (context, url) {
               return CachedNetworkImage(
                 cacheKey: thumbnailUrl,
