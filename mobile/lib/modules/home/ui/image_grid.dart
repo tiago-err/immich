@@ -18,33 +18,34 @@ class ImageGrid extends ConsumerWidget {
           var assetType = assetGroup[index].type;
 
           return GestureDetector(
-              onTap: () {},
-              child: Stack(
-                children: [
-                  ThumbnailImage(asset: assetGroup[index]),
-                  assetType == 'IMAGE'
-                      ? Container()
-                      : Positioned(
-                          top: 5,
-                          right: 5,
-                          child: Row(
-                            children: [
-                              Text(
-                                assetGroup[index].duration.toString().substring(0, 7),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                              const Icon(
-                                Icons.play_circle_outline_rounded,
+            onTap: () {},
+            child: Stack(
+              children: [
+                ThumbnailImage(asset: assetGroup[index]),
+                assetType == 'IMAGE'
+                    ? Container()
+                    : Positioned(
+                        top: 5,
+                        right: 5,
+                        child: Row(
+                          children: [
+                            Text(
+                              assetGroup[index].duration.toString().substring(0, 7),
+                              style: const TextStyle(
                                 color: Colors.white,
+                                fontSize: 10,
                               ),
-                            ],
-                          ),
-                        )
-                ],
-              ));
+                            ),
+                            const Icon(
+                              Icons.play_circle_outline_rounded,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      )
+              ],
+            ),
+          );
         },
         childCount: assetGroup.length,
       ),

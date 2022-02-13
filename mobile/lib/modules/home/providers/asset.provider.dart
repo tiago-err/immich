@@ -16,7 +16,6 @@ class AssetNotifier extends StateNotifier<List<ImmichAsset>> {
 
   getAllAsset() async {
     List<ImmichAsset> allAssets = [];
-
     var deviceInfo = await _deviceInfoService.getDeviceInfo();
     var deviceId = deviceInfo["deviceId"];
 
@@ -26,13 +25,15 @@ class AssetNotifier extends StateNotifier<List<ImmichAsset>> {
       for (var asset in localAssets) {
         allAssets.add(
           ImmichAsset(
-              assetId: asset.id,
-              deviceId: deviceId,
-              mediaType: asset.type,
-              createdDate: asset.createDateTime,
-              type: "local",
-              localAsset: asset,
-              backupAsset: null),
+            assetId: asset.id,
+            deviceId: deviceId,
+            mediaType: asset.type,
+            createdDate: asset.createDateTime,
+            type: "local",
+            localAsset: asset,
+            backupAsset: null,
+            isBackup: false,
+          ),
         );
       }
     }
@@ -50,12 +51,21 @@ class AssetNotifier extends StateNotifier<List<ImmichAsset>> {
             createdDate: DateTime.parse(asset.createdAt),
             localAsset: null,
             backupAsset: asset,
+            isBackup: true,
           ),
         );
       }
     }
 
     List<ImmichAsset> distinctAsset = allAssets.toSet().toList();
+    for (var i = 0; i < distinctAsset.length; i++) {
+      var asset = backupAsset!
+          .indexWhere((e) => e.deviceId == distinctAsset[i].deviceId && e.deviceAssetId == distinctAsset[i].assetId);
+
+      if (asset != -1) {
+        distinctAsset[i] = distinctAsset[i].copyWith(isBackup: true);
+      }
+    }
 
     distinctAsset.sortByCompare<DateTime>((element) => element.createdDate, (a, b) => b.compareTo(a));
 

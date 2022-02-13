@@ -9,6 +9,7 @@ class ImmichAsset {
   DateTime createdDate;
   AssetEntity? localAsset;
   BackupAsset? backupAsset;
+  bool isBackup;
 
   ImmichAsset({
     required this.assetId,
@@ -16,19 +17,20 @@ class ImmichAsset {
     required this.type,
     required this.mediaType,
     required this.createdDate,
+    required this.isBackup,
     this.localAsset,
     this.backupAsset,
   });
 
-  ImmichAsset copyWith({
-    String? assetId,
-    String? deviceId,
-    String? type,
-    AssetType? mediaType,
-    AssetEntity? localAsset,
-    BackupAsset? backupAsset,
-    DateTime? createdDate,
-  }) {
+  ImmichAsset copyWith(
+      {String? assetId,
+      String? deviceId,
+      String? type,
+      AssetType? mediaType,
+      AssetEntity? localAsset,
+      BackupAsset? backupAsset,
+      DateTime? createdDate,
+      bool? isBackup}) {
     return ImmichAsset(
       assetId: assetId ?? this.assetId,
       deviceId: deviceId ?? this.deviceId,
@@ -37,12 +39,13 @@ class ImmichAsset {
       mediaType: mediaType ?? this.mediaType,
       localAsset: localAsset ?? this.localAsset,
       backupAsset: backupAsset ?? this.backupAsset,
+      isBackup: isBackup ?? this.isBackup,
     );
   }
 
   @override
   String toString() {
-    return 'UltimateAsset(assetId: $assetId, deviceId: $deviceId, type: $type, mediaType: $mediaType, localAsset: $localAsset, backupAsset: $backupAsset)';
+    return 'UltimateAsset(assetId: $assetId, deviceId: $deviceId, type: $type, mediaType: $mediaType, localAsset: $localAsset, backupAsset: $backupAsset, isBackup: $isBackup)';
   }
 
   @override

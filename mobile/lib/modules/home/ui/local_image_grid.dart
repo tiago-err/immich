@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/modules/home/ui/thumbnail_image.dart';
 import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class LocalImageGrid extends ConsumerWidget {
   final List<ImmichAsset> assetGroup;
@@ -30,15 +31,28 @@ class LocalImageGrid extends ConsumerWidget {
                   future: getThumbData(assetGroup[index]),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return GestureDetector(
-                        onTap: () {},
-                        child: Image.memory(
-                          snapshot.data!,
-                          fit: BoxFit.cover,
-                          width: 512,
-                          height: 512,
-                          cacheHeight: 250,
-                        ),
+                      return Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () {},
+                            child: Image.memory(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                              width: 512,
+                              height: 512,
+                              cacheHeight: 250,
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 5,
+                            right: 5,
+                            child: Text(
+                              assetGroup[index].isBackup ? "local+backup" : "local",
+                              style:
+                                  const TextStyle(color: Color.fromARGB(255, 2, 255, 15), fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        ],
                       );
                     } else {
                       return Container(
@@ -49,7 +63,40 @@ class LocalImageGrid extends ConsumerWidget {
                     }
                   },
                 )
-              : ThumbnailImage(asset: assetGroup[index].backupAsset!);
+              : Stack(
+                  children: [
+                    ThumbnailImage(asset: assetGroup[index].backupAsset!),
+                    assetGroup[index].mediaType == AssetType.image
+                        ? Container()
+                        : Positioned(
+                            top: 5,
+                            right: 5,
+                            child: Row(
+                              children: [
+                                Text(
+                                  assetGroup[index].backupAsset!.duration.toString().substring(0, 7),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.play_circle_outline_rounded,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                    Positioned(
+                      bottom: 5,
+                      right: 5,
+                      child: Icon(
+                        assetGroup[index].isBackup ? Icons.cloud_done_outlined : Icons.mobile_friendly_outlined,
+                        color: Colors.blue,
+                      ),
+                    )
+                  ],
+                );
         },
         childCount: assetGroup.length,
       ),
