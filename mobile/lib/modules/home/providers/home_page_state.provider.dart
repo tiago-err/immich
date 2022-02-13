@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:immich_mobile/modules/home/models/home_page_state.model.dart';
-import 'package:immich_mobile/shared/models/backup_asset.model.dart';
+import 'package:immich_mobile/shared/models/immich_asset.model.dart';
 
 class HomePageStateNotifier extends StateNotifier<HomePageState> {
   HomePageStateNotifier()
@@ -24,7 +24,7 @@ class HomePageStateNotifier extends StateNotifier<HomePageState> {
     state = state.copyWith(selectedDateGroup: currentDateGroup);
   }
 
-  void enableMultiSelect(Set<BackupAsset> selectedItems) {
+  void enableMultiSelect(Set<ImmichAsset> selectedItems) {
     state = state.copyWith(isMultiSelectEnable: true, selectedItems: selectedItems);
   }
 
@@ -32,27 +32,27 @@ class HomePageStateNotifier extends StateNotifier<HomePageState> {
     state = state.copyWith(isMultiSelectEnable: false, selectedItems: {}, selectedDateGroup: {});
   }
 
-  void addSingleSelectedItem(BackupAsset asset) {
+  void addSingleSelectedItem(ImmichAsset asset) {
     state = state.copyWith(selectedItems: {...state.selectedItems, asset});
   }
 
-  void addMultipleSelectedItems(List<BackupAsset> assets) {
+  void addMultipleSelectedItems(List<ImmichAsset> assets) {
     state = state.copyWith(selectedItems: {...state.selectedItems, ...assets});
   }
 
-  void removeSingleSelectedItem(BackupAsset asset) {
-    Set<BackupAsset> currentList = state.selectedItems;
+  void removeSingleSelectedItem(ImmichAsset asset) {
+    Set<ImmichAsset> currentList = state.selectedItems;
 
-    currentList.removeWhere((e) => e.id == asset.id);
+    currentList.removeWhere((e) => e.assetId == asset.assetId);
 
     state = state.copyWith(selectedItems: currentList);
   }
 
-  void removeMultipleSelectedItem(List<BackupAsset> assets) {
-    Set<BackupAsset> currentList = state.selectedItems;
+  void removeMultipleSelectedItem(List<ImmichAsset> assets) {
+    Set<ImmichAsset> currentList = state.selectedItems;
 
-    for (BackupAsset asset in assets) {
-      currentList.removeWhere((e) => e.id == asset.id);
+    for (ImmichAsset asset in assets) {
+      currentList.removeWhere((e) => e.assetId == asset.assetId);
     }
 
     state = state.copyWith(selectedItems: currentList);

@@ -29,7 +29,7 @@ class AssetNotifier extends StateNotifier<List<ImmichAsset>> {
             deviceId: deviceId,
             mediaType: asset.type,
             createdDate: asset.createDateTime,
-            type: "local",
+            type: ImmichAssetType.local,
             localAsset: asset,
             backupAsset: null,
             isBackup: false,
@@ -47,7 +47,7 @@ class AssetNotifier extends StateNotifier<List<ImmichAsset>> {
             assetId: asset.deviceAssetId,
             deviceId: asset.deviceId,
             mediaType: asset.type == "IMAGE" ? AssetType.image : AssetType.video,
-            type: "backup",
+            type: ImmichAssetType.backup,
             createdDate: DateTime.parse(asset.createdAt),
             localAsset: null,
             backupAsset: asset,
@@ -56,8 +56,6 @@ class AssetNotifier extends StateNotifier<List<ImmichAsset>> {
         );
       }
     }
-
-    final asset = await AssetEntity.fromId("C06741CE-8AAA-4C0B-93FA-54DCAFBEE642/L0/001");
 
     List<ImmichAsset> distinctAsset = allAssets.toSet().toList();
     for (var i = 0; i < distinctAsset.length; i++) {

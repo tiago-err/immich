@@ -9,7 +9,6 @@ import 'package:immich_mobile/modules/asset_viewer/ui/top_control_app_bar.dart';
 import 'package:immich_mobile/modules/home/services/asset.service.dart';
 import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 import 'package:immich_mobile/shared/models/immich_asset_with_exif.model.dart';
-import 'package:photo_view/photo_view.dart';
 
 // ignore: must_be_immutable
 class ImageViewerPage extends HookConsumerWidget {
@@ -43,13 +42,14 @@ class ImageViewerPage extends HookConsumerWidget {
         asset: asset,
         onMoreInfoPressed: () {
           showModalBottomSheet(
-              backgroundColor: Colors.black,
-              barrierColor: Colors.transparent,
-              isScrollControlled: false,
-              context: context,
-              builder: (context) {
-                return ExifBottomSheet(assetDetail: assetDetail!);
-              });
+            backgroundColor: Colors.black,
+            barrierColor: Colors.transparent,
+            isScrollControlled: false,
+            context: context,
+            builder: (context) {
+              return ExifBottomSheet(assetDetail: assetDetail!);
+            },
+          );
         },
       ),
       body: Center(
@@ -60,12 +60,34 @@ class ImageViewerPage extends HookConsumerWidget {
             imageUrl: imageUrl,
             httpHeaders: {"Authorization": "Bearer ${box.get(accessTokenKey)}"},
             fadeInDuration: const Duration(milliseconds: 250),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-            imageBuilder: (context, imageProvider) {
-              return PhotoView(imageProvider: imageProvider);
-            },
+            errorWidget: (context, url, error) => ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 300),
+              child: Wrap(
+                spacing: 32,
+                runSpacing: 32,
+                alignment: WrapAlignment.center,
+                children: [
+                  const Text(
+                    "Failed To Render Image - Possibly Corrupted Data",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  SingleChildScrollView(
+                    child: Text(
+                      error.toString(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // imageBuilder: (context, imageProvider) {
+            //   return PhotoView(imageProvider: imageProvider);
+            // },
             placeholder: (context, url) {
               return CachedNetworkImage(
+                cacheKey: thumbnailUrl,
                 fit: BoxFit.cover,
                 imageUrl: thumbnailUrl,
                 httpHeaders: {"Authorization": "Bearer ${box.get(accessTokenKey)}"},
@@ -74,7 +96,10 @@ class ImageViewerPage extends HookConsumerWidget {
                   scale: 0.2,
                   child: CircularProgressIndicator(value: downloadProgress.progress),
                 ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+                errorWidget: (context, url, error) => Icon(
+                  Icons.error,
+                  color: Colors.grey[300],
+                ),
               );
             },
           ),

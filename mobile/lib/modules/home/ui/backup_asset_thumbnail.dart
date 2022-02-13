@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+import 'package:immich_mobile/modules/home/ui/thumbnail_image.dart';
+import 'package:immich_mobile/shared/models/immich_asset.model.dart';
+import 'package:photo_manager/photo_manager.dart';
+
+class BackupAssetThumbnail extends StatelessWidget {
+  final ImmichAsset backupImmichAsset;
+
+  const BackupAssetThumbnail({Key? key, required this.backupImmichAsset}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ThumbnailImage(asset: backupImmichAsset),
+        backupImmichAsset.mediaType == AssetType.image
+            ? Container()
+            : Positioned(
+                top: 5,
+                right: 5,
+                child: Row(
+                  children: [
+                    Text(
+                      backupImmichAsset.backupAsset!.duration.toString().substring(0, 7),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.play_circle_outline_rounded,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+        Positioned(
+          bottom: 10,
+          right: 10,
+          child: Icon(
+            backupImmichAsset.isBackup ? Icons.cloud_done_outlined : null,
+            color: Colors.white,
+            size: 15,
+          ),
+        )
+      ],
+    );
+  }
+}

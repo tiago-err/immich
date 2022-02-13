@@ -1,10 +1,12 @@
 import 'package:immich_mobile/shared/models/backup_asset.model.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+enum ImmichAssetType { local, backup }
+
 class ImmichAsset {
   String assetId;
   String deviceId;
-  String type;
+  ImmichAssetType type;
   AssetType mediaType;
   DateTime createdDate;
   AssetEntity? localAsset;
@@ -25,7 +27,7 @@ class ImmichAsset {
   ImmichAsset copyWith(
       {String? assetId,
       String? deviceId,
-      String? type,
+      ImmichAssetType? type,
       AssetType? mediaType,
       AssetEntity? localAsset,
       BackupAsset? backupAsset,
